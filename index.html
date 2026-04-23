@@ -22,6 +22,26 @@
     }
 
     body {
+      <div id="waybar" class="fixed top-2 left-1/2 -translate-x-1/2 w-[98%] max-w-[1400px] h-[30px] z-[1000] flex justify-between items-center px-4 font-mono text-[11px]">
+    
+    <div class="bar-module flex gap-1 bg-[#11111b]/80 backdrop-blur-md rounded-lg border border-[#313244] px-2 h-full items-center">
+        <span class="ws-item active">1</span>
+        <span class="ws-item">2</span>
+        <span class="ws-item">3</span>
+        <span class="ws-item">4</span>
+    </div>
+
+    <div class="bar-module bg-[#11111b]/80 backdrop-blur-md rounded-lg border border-[#313244] px-4 h-full flex items-center text-[#cba6f7] font-bold shadow-lg">
+        <span id="waybar-clock">00:00:00</span>
+    </div>
+
+    <div class="bar-module flex gap-3 bg-[#11111b]/80 backdrop-blur-md rounded-lg border border-[#313244] px-3 h-full items-center">
+        <span class="text-[#a6e3a1]">  WIFI</span>
+        <span class="text-[#f9e2af]">  75%</span>
+        <span class="text-[#89b4fa]">  90%</span>
+        <span class="text-[#f5c2e7] border-l border-[#313244] pl-2">ARCH</span>
+    </div>
+</div>
       background-color: var(--crust);
       background-image: 
         radial-gradient(circle at 20% 20%, rgba(203, 166, 247, 0.05) 0%, transparent 40%),
