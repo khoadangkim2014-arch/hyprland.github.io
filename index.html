@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Hyprland One-4 Clone</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;900&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Bảng màu Catppuccin Mocha */
+    :root {
+      --base: #1e1e2e;
+      --mantle: #181825;
+      --crust: #11111b;
+      --lavender: #b4befe;
+      --mauve: #cba6f7;
+      --sapphire: #74c7ec;
+      --red: #f38ba8;
+      --border-inactive: rgba(49, 50, 68, 0.5);
+      /* Đường cong Bezier đặc trưng của Hyprland */
+      --hypr-bezier: cubic-bezier(0.05, 0.9, 0.1, 1.05);
+    }
+
+    body {
+      background-color: var(--crust);
+      background-image: 
+        radial-gradient(circle at 20% 20%, rgba(203, 166, 247, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 80% 80%, rgba(116, 199, 236, 0.05) 0%, transparent 40%);
+      color: #cdd6f4;
+      font-family: 'Inter', sans-serif;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    /* Hiệu ứng viền Hyprland One-4 */
+    .window {
+      position: absolute;
+      background: var(--base);
+      border-radius: 10px; /* Bo góc đặc trưng */
+      border: 2px solid var(--border-inactive);
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.4s var(--hypr-bezier), border-color 0.3s;
+      animation: windowOpen 0.5s var(--hypr-bezier) forwards;
+    }
+
+    /* Viền phát sáng Gradient xoay khi Active */
+    .window.active {
+      border: 2px solid transparent;
+      background-clip: padding-box;
+      box-shadow: 0 0 25px rgba(180, 190, 254, 0.2);
+    }
+
+    .window.active::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      z-index: -1;
+      border-radius: 11px;
+      background: linear-gradient(45deg, var(--mauve), var(--sapphire), var(--lavender), var(--mauve));
+      background-size: 300% 300%;
+      animation: rotateGradient 4s linear infinite;
+    }
+
+    @keyframes rotateGradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes windowOpen {
+      from { transform: scale(0.8) translateY(50px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    /* Title Bar tối giản */
+    .window-bar {
+      background: var(--mantle);
+      padding: 6px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: grab;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .window-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--sapphire);
+      font-weight: bold;
+    }
+
+    .controls { display: flex; gap: 8px; }
+    .btn { width: 11px; height: 11px; border-radius: 50%; }
+    .btn-close { background: var(--red); cursor: pointer; transition: 0.2s; }
+    .btn-close:hover { filter: brightness(1.2); transform: scale(1.2); }
+
+    /* Rofi Launcher Style */
+    #launcher {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 17, 27, 0.7);
+      backdrop-filter: blur(10px);
+      z-index: 10000;
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .launcher-box {
+      background: var(--base);
+      width: 500px;
+      border: 2px solid var(--lavender);
+      border-radius: 15px;
+      padding: 20px;
+      animation: launcherSlide 0.3s var(--hypr-bezier);
+    }
+
+    @keyframes launcherSlide {
+      from { transform: scale(1.1); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    input {
+      background: var(--mantle);
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      color: white;
+      font-family: 'JetBrains Mono', monospace;
+      outline: none;
+      border-bottom: 2px solid var(--mauve);
+    }
+  </style>
+</head>
+<body>
+
+  <div id="launcher">
+    <div class="launcher-box">
+      <input type="text" id="search" placeholder="Run Application..." spellcheck="false">
+      <div class="mt-4 space-y-2 text-sm font-mono text-gray-400">
+        <p class="p-2 hover:bg-[#313244] rounded">󰈹 Firefox</p>
+        <p class="p-2 hover:bg-[#313244] rounded">󰆍 Kitty</p>
+        <p class="p-2 hover:bg-[#313244] rounded">󰅩 VS Code</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-10 h-full relative">
+    
+    <div class="window active w-[550px] h-[350px] top-10 left-10" id="win1">
+      <div class="window-bar" onmousedown="dragStart(event, 'win1')">
+        <span class="window-title"> terminal — nvim</span>
+        <div class="controls">
+          <div class="btn bg-gray-600"></div>
+          <div class="btn btn-close" onclick="closeWin('win1')"></div>
+        </div>
+      </div>
+      <div class="p-5 font-mono text-sm overflow-hidden flex-grow">
+        <p class="text-[#a6e3a1]">import { Hyprland } from "linux-vibes";</p>
+        <p class="mt-4 text-gray-500">// Đang render giao diện One-4...</p>
+        <p class="mt-2 text-[#cba6f7]">Success: Gradient borders active.</p>
+      </div>
+    </div>
+
+    <div class="window w-[400px] h-[300px] top-60 left-[40%]" id="win2">
+      <div class="window-bar" onmousedown="dragStart(event, 'win2')">
+        <span class="window-title">󰈹 firefox — hypr.land</span>
+        <div class="controls">
+          <div class="btn btn-close" onclick="closeWin('win2')"></div>
+        </div>
+      </div>
+      <div class="p-10 text-center">
+        <h1 class="text-3xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">ONE-4 UI</h1>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let topZ = 100;
+
+    // Di chuyển cửa sổ
+    function dragStart(e, id) {
+      const win = document.getElementById(id);
+      let startX = e.clientX - win.offsetLeft;
+      let startY = e.clientY - win.offsetTop;
+      
+      // Focus
+      topZ++;
+      win.style.zIndex = topZ;
+      document.querySelectorAll('.window').forEach(w => w.classList.remove('active'));
+      win.classList.add('active');
+
+      function move(e) {
+        win.style.left = (e.clientX - startX) + 'px';
+        win.style.top = (e.clientY - startY) + 'px';
+      }
+      
+      function stop() {
+        document.removeEventListener('mousemove', move);
+        document.removeEventListener('mouseup', stop);
+      }
+      
+      document.addEventListener('mousemove', move);
+      document.addEventListener('mouseup', stop);
+    }
+
+    // Đóng cửa sổ
+    function closeWin(id) {
+      const win = document.getElementById(id);
+      win.style.transform = "scale(0.9) translateY(20px)";
+      win.style.opacity = "0";
+      setTimeout(() => win.remove(), 400);
+    }
+
+    // Launcher (Phím Super)
+    window.addEventListener('keydown', (e) => {
+      if (e.key === "Meta" || e.key === "OS") {
+        e.preventDefault();
+        const l = document.getElementById('launcher');
+        const isOpen = l.style.display === "flex";
+        l.style.display = isOpen ? "none" : "flex";
+        if (!isOpen) document.getElementById('search').focus();
+      }
+      if (e.key === "Escape") document.getElementById('launcher').style.display = "none";
+    });
+  </script>
+</body>
+</html>
